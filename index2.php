@@ -13,13 +13,36 @@ echo date('l',strtotime($datum));
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+	<link href="css/custom.css" rel="stylesheet">
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+	
+	<script>
+	$(document).ready(function(){
+		$("#save").hide();
+		$("#edit").hide();
+		$("#edit").click(function(){
+			$("#trajanje").prop('disabled', function(i, v) { return !v; });
+			 $("#save").toggle();
+		});
+		$("#submit").click(function(){
+			$(this).prop('disabled', true);
+			$("#edit").show();
+		});
+		$("#save").click(function(){
+			$("#trajanje").prop('disabled', true);
+			$("#save").toggle();
+		});
+	});
+	</script>
+
   </head>
   <body>
     <h1>Hello, world!</h1>
@@ -33,8 +56,24 @@ echo date('l',strtotime($datum));
 		  </h4>
 		</div>
 		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-		  <div class="panel-body">
-			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+		  <div class="panel-body list">
+			<ul class="list-group list">
+			  <li class="list-group-item list">
+				<input type="text" class="form-control">
+			  </li>
+			  <li class="list-group-item list">
+				<input type="text" class="form-control">
+			  </li>
+			  <li class="list-group-item list">
+				<input type="text" class="form-control">
+			  </li>
+			  <li class="list-group-item list">
+				<input type="text" class="form-control">
+			  </li>
+			  <li class="list-group-item list">
+				<input type="text" class="form-control">
+			  </li>
+			</ul>
 		  </div>
 		</div>
 	  </div>
@@ -47,8 +86,19 @@ echo date('l',strtotime($datum));
 		  </h4>
 		</div>
 		<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-		  <div class="panel-body">
-			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+		  <div class="panel-body list">
+			<div class="row">
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><button type="submit" class="btn btn-primary">Submit</button></div>
+			</div>
+			<div class="row">
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
+				<div class="col-md-2 list"><button type="submit" class="btn btn-primary">Submit</button></div>
+			</div>
 		  </div>
 		</div>
 	  </div>
@@ -61,8 +111,37 @@ echo date('l',strtotime($datum));
 		  </h4>
 		</div>
 		<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-		  <div class="panel-body">
-			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+		  <div class="panel-body list">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+					  <th>#</th>
+					  <th>Tv</th>
+					  <th>Emisija</th>
+					  <th>Trajanje</th>
+					  <th>Status</th>
+					  <th><span class="glyphicon glyphicon-cog"></span></th>
+					</tr>
+				 </thead>
+				  <tbody>
+					<tr>
+					  <td></td>
+					  <td><input type="text" class="form-control input-sm" value="TV PINK" disabled></td>
+					  <td><input type="text" class="form-control input-sm" value="Vesti" disabled></td>
+					  <td><input type="text" class="form-control input-sm" value="60" disabled id="trajanje"></td>
+					  <td valign="middle"><span class="label label-danger"> Pending </span></td>
+					  <td><button type="submit" class="btn btn-primary" id="submit">Submit</button> <button type="submit" class="btn btn-danger" id="edit">Edit</button> <button type="submit" class="btn btn-success" id="save">Save</button></td>
+					</tr>
+					<tr>
+					  <td></td>
+					  <td><input type="text" class="form-control input-sm" value="TV PINK" disabled></td>
+					  <td><input type="text" class="form-control input-sm" value="Vesti" disabled></td>
+					  <td><input type="text" class="form-control input-sm" value="60" disabled id="trajanje"></td>
+					  <td valign="middle"><span class="label label-success"> Success </span></td>
+					  <td><button type="submit" class="btn btn-primary" id="submit">Submit</button> <button type="submit" class="btn btn-danger" id="edit">Edit</button> <button type="submit" class="btn btn-success" id="save">Save</button></td>
+					</tr>
+				  </tbody>
+			</table>
 		  </div>
 		</div>
 	  </div>
