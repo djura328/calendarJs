@@ -1,0 +1,19 @@
+.panel-body.list{
+    padding: 0px;
+}
+.list-group.list{
+	margin-bottom: 0px;
+}
+.list-group-item.list {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.col-md-3.list, .col-md-2.list{
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:20px;
+}
