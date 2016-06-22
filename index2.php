@@ -1,4 +1,5 @@
 <?php
+include "connector.php";
 echo $datum=$_GET['datum'];
 echo date('l',strtotime($datum));
 ?>
@@ -46,71 +47,20 @@ echo date('l',strtotime($datum));
   </head>
   <body>
     <h1>Hello, world!</h1>
-	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-	  <div class="panel panel-default">
-		<div class="panel-heading" role="tab" id="headingOne">
-		  <h4 class="panel-title">
-			<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-			  Collapsible Group Item #1
-			</a>
-		  </h4>
-		</div>
-		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-		  <div class="panel-body list">
-			<ul class="list-group list">
-			  <li class="list-group-item list">
-				<input type="text" class="form-control">
-			  </li>
-			  <li class="list-group-item list">
-				<input type="text" class="form-control">
-			  </li>
-			  <li class="list-group-item list">
-				<input type="text" class="form-control">
-			  </li>
-			  <li class="list-group-item list">
-				<input type="text" class="form-control">
-			  </li>
-			  <li class="list-group-item list">
-				<input type="text" class="form-control">
-			  </li>
-			</ul>
-		  </div>
-		</div>
-	  </div>
-	  <div class="panel panel-default">
-		<div class="panel-heading" role="tab" id="headingTwo">
-		  <h4 class="panel-title">
-			<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-			  Collapsible Group Item #2
-			</a>
-		  </h4>
-		</div>
-		<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-		  <div class="panel-body list">
-			<div class="row">
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><button type="submit" class="btn btn-primary">Submit</button></div>
-			</div>
-			<div class="row">
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><input type="text" class="form-control input-sm"></div>
-				<div class="col-md-2 list"><button type="submit" class="btn btn-primary">Submit</button></div>
-			</div>
-		  </div>
-		</div>
-	  </div>
+	  <?php
+			  $i=0;
+			  $result=mysqli_query($link,"SELECT * FROM `user`");
+			  while($row=mysqli_fetch_array($result)){
+	  ?>
 	  <div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="headingThree">
 		  <h4 class="panel-title">
-			<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-			  Collapsible Group Item #3
+			<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree<?php echo $i; ?>" aria-expanded="false" aria-controls="collapseThree">
+			  <?php echo $row['first_name']; ?>
 			</a>
 		  </h4>
 		</div>
-		<div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+		<div id="collapseThree<?php echo $i; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 		  <div class="panel-body list">
 			<table class="table table-hover">
 				<thead>
@@ -145,6 +95,10 @@ echo date('l',strtotime($datum));
 		  </div>
 		</div>
 	  </div>
+	  <?php
+	  $i++;
+	  }
+	  ?>
 	</div>
 	
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
