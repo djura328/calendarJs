@@ -1,7 +1,7 @@
 <?php
 include "connector.php";
 echo $datum=$_REQUEST['datum'];
-echo $day=date('l',strtotime($datum)) . "</br>";
+echo $day=date('l',strtotime($datum));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,7 +117,15 @@ echo $day=date('l',strtotime($datum)) . "</br>";
 	<?php
 	if(isset($_POST['submit'])){
 	$user=$_POST['user'];
-	echo $_POST['name_tv'];
+	$name_tv=$_POST['name_tv'];
+	$name_emission=$_POST['name_emission'];
+	$brClanaka=$_POST['brClanaka'];
+	$duration=$_POST['duration'];
+	$da=$_POST['datum'];
+		$dan=date('l',strtotime($da));
+	$idUser=$_POST['idUser'];
+	$idEmission=$_POST['idEmission'];
+	mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka')");
 	
 	}
 	?>
@@ -127,7 +135,7 @@ echo $day=date('l',strtotime($datum)) . "</br>";
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 	  <?php
 			  $i=0;
-			  $result=mysqli_query($link,"SELECT * FROM `user`");
+			  $result=mysqli_query($link,"SELECT DISTINCT user.first_name, user.last_name, user.id AS idUser FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE emission.day='$day'");
 			  while($row=mysqli_fetch_array($result)){
 	  ?>
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -157,8 +165,8 @@ echo $day=date('l',strtotime($datum)) . "</br>";
 				  <tbody>
 				  <?php
 				  $ii=0;
-				  $id=$row['id'];
-				  $res=mysqli_query($link, "SELECT * FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
+				  $id=$row['idUser'];
+				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  while($row2=mysqli_fetch_array($res)){
 				  ?>
 					<tr>
@@ -166,13 +174,15 @@ echo $day=date('l',strtotime($datum)) . "</br>";
 						  <td></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
-						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="pocetak" readonly></td>
+						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka"></td>
 						  <td><input type="text" class="form-control input-sm" name="duration" value="<?php echo $row2['duration']; ?>" id="trajanje" placeholder="HH:MM:SS"></td>
 						  <td valign="middle"><span class="label label-danger"> Pending </span></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>">Edit</button> <button type="submit" class="btn btn-success" id="save" name="save">Save</button></td>
+						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>">Edit</button></td>
 						</form>
 							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 							  <div class="modal-dialog" role="document">
