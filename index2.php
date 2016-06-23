@@ -1,7 +1,7 @@
 <?php
 include "connector.php";
 echo $datum=$_REQUEST['datum'];
-echo date('l',strtotime($datum)) . "</br>";
+echo $day=date('l',strtotime($datum)) . "</br>";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,7 +56,7 @@ echo date('l',strtotime($datum)) . "</br>";
 	});
 	});
 	</script>-->
-	<script>
+	<!--<script>
 	$(document).ready(function(){
 	$('form').submit(function(e) {
 
@@ -76,7 +76,7 @@ echo date('l',strtotime($datum)) . "</br>";
 		e.preventDefault(); // avoid to execute the actual submit of the form.
 	});
 	});
-	</script>
+	</script>-->
 	<!--<script>
 	$(document).ready(function(){
 		$('button').on('click',function(){
@@ -84,7 +84,43 @@ echo date('l',strtotime($datum)) . "</br>";
 		});
 	});
 	</script>-->
-
+	<script>
+	$(document).ready(function(){
+		$('#exampleModal').on('show.bs.modal', function (event) {
+		  var button = $(event.relatedTarget); // Button that triggered the modal
+		  var name_tv = button.data('name_tv'); // Extract info from data-* attributes
+		  var name_emission= button.data('name_emission');
+		  var duration= button.data('duration');
+		  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+		  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+		  var modal = $(this);
+		  modal.find('.modal-title').html(name_tv + '</br>'+ name_emission);
+		  modal.find('.modal-body input[name=editTrajanje]').val(duration);
+		});
+		$("#submit2").click(function(){
+			var brClanaka=$('#brClanak').val();
+			var trajanje=$('#trajanje').val();
+			$.ajax({
+				type: "POST",
+				url: "save.php", //process to mail
+				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje,
+				success: function(msg){
+					alert("succes"+msg);
+				},
+				error: function(){
+					alert("failure");
+				}
+			});
+		});
+	});
+	</script>
+	<?php
+	if(isset($_POST['submit'])){
+	$user=$_POST['user'];
+	echo $_POST['name_tv'];
+	
+	}
+	?>
   </head>
   <body>
     <h1>Hello, world!</h1>
@@ -111,6 +147,7 @@ echo date('l',strtotime($datum)) . "</br>";
 					  <th>#</th>
 					  <th>Tv</th>
 					  <th>Emisija</th>
+					  <th>Vreme</th>
 					  <th>Broj clanaka</th>
 					  <th>Trajanje</th>
 					  <th>Status</th>
@@ -124,21 +161,47 @@ echo date('l',strtotime($datum)) . "</br>";
 				  $res=mysqli_query($link, "SELECT * FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  while($row2=mysqli_fetch_array($res)){
 				  ?>
-				  <form>
 					<tr>
-						
+						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 						  <td></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
+						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="pocetak" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka"></td>
-						  <td><input type="text" class="form-control input-sm" name="duration" value="<?php echo $row2['duration']; ?>"  readonly  id="trajanje"></td>
+						  <td><input type="text" class="form-control input-sm" name="duration" value="<?php echo $row2['duration']; ?>" id="trajanje" placeholder="HH:MM:SS"></td>
 						  <td valign="middle"><span class="label label-danger"> Pending </span></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit">Edit</button> <button type="submit" class="btn btn-success" id="save" name="save">Save</button></td>
-						
+						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>">Edit</button> <button type="submit" class="btn btn-success" id="save" name="save">Save</button></td>
+						</form>
+							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+							  <div class="modal-dialog" role="document">
+								<div class="modal-content">
+								  <div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="exampleModalLabel">New message</h4>
+								  </div>
+								  <div class="modal-body">
+									<form name="fo" class="fo">
+									  <p></p>
+									  <div class="form-group">
+										<label for="recipient-name" class="control-label">Broj clanaka:</label>
+										<input type="text" class="form-control" id="brClanak" name="editBrClanaka">
+									  </div>
+									  <div class="form-group">
+										<label for="recipient-name" class="control-label">Trajanje:</label>
+										<input type="text" class="form-control" id="trajanje" name="editTrajanje">
+									  </div>
+									</form>
+								  </div>
+								  <div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									<input type="submit" class="btn btn-primary" value="submit" id="submit2">
+								  </div>
+								</div>
+							  </div>
+							</div>
 					</tr>
-				</form>
 				  <?php
 				  $ii++;
 				  }
