@@ -47,6 +47,7 @@ echo date('l',strtotime($datum));
   </head>
   <body>
     <h1>Hello, world!</h1>
+	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 	  <?php
 			  $i=0;
 			  $result=mysqli_query($link,"SELECT * FROM `user`");
