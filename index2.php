@@ -91,21 +91,33 @@ echo $day=date('l',strtotime($datum));
 		  var name_tv = button.data('name_tv'); // Extract info from data-* attributes
 		  var name_emission= button.data('name_emission');
 		  var duration= button.data('duration');
+		  var article= button.data('article');
+		  var idUser= button.data('id_user');
+		  var idArtice= button.data('id_article');
+		  var date= button.data('date');
 		  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
 		  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 		  var modal = $(this);
 		  modal.find('.modal-title').html(name_tv + '</br>'+ name_emission);
 		  modal.find('.modal-body input[name=editTrajanje]').val(duration);
+		  modal.find('.modal-body input[name=editBrClanaka]').val(article);
+		  modal.find('.modal-body input[name=idUserModal]').val(idUser);
+		  modal.find('.modal-body input[name=idArticleModal]').val(idArtice);
+		  modal.find('.modal-body input[name=dateModal]').val(date);
 		});
 		$("#submit2").click(function(){
 			var brClanaka=$('#brClanak').val();
 			var trajanje=$('#trajanje').val();
+			var idUser=$('#idUserModal').val();
+			var idArticle=$('#idArticleModal').val();
+			var date=$('#dateModal').val();
 			$.ajax({
 				type: "POST",
 				url: "save.php", //process to mail
-				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje,
+				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date,
 				success: function(msg){
 					alert("succes"+msg);
+					 location.reload();
 				},
 				error: function(){
 					alert("failure");
@@ -116,22 +128,32 @@ echo $day=date('l',strtotime($datum));
 	</script>
 	<?php
 	if(isset($_POST['submit'])){
-	$user=$_POST['user'];
-	$name_tv=$_POST['name_tv'];
-	$name_emission=$_POST['name_emission'];
-	$brClanaka=$_POST['brClanaka'];
-	$duration=$_POST['duration'];
-	$da=$_POST['datum'];
-		$dan=date('l',strtotime($da));
-	$idUser=$_POST['idUser'];
-	$idEmission=$_POST['idEmission'];
-	mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka')");
-	
+		if($_POST['rowCount']==0){
+			$user=$_POST['user'];
+			$name_tv=$_POST['name_tv'];
+			$name_emission=$_POST['name_emission'];
+			$brClanaka=$_POST['brClanaka'];
+			$duration=$_POST['duration'];
+			$da=$_POST['datum'];
+				$dan=date('l',strtotime($da));
+			$idUser=$_POST['idUser'];
+			$idEmission=$_POST['idEmission'];
+			mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka')");
+		}
+		else{$info="Emisija je vec uneta u bazu, mozete je samo izmeniti";}
 	}
 	?>
   </head>
   <body>
     <h1>Hello, world!</h1>
+	<?php 
+	if(isset($info)){
+	if($info!=''){?>
+	<div class="alert alert-danger alert-dismissible" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	  <strong>Warning!</strong> <?php echo $info; ?>
+	</div>
+	<?php }}?>
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 	  <?php
 			  $i=0;
@@ -168,6 +190,11 @@ echo $day=date('l',strtotime($datum));
 				  $id=$row['idUser'];
 				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  while($row2=mysqli_fetch_array($res)){
+					  $idEmisije=$row2['idEmission'];
+					  $idUser=$row2['idUser'];
+					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
+					  $rowcount=mysqli_num_rows($status);
+					  $stat=mysqli_fetch_array($status);
 				  ?>
 					<tr>
 						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
@@ -175,14 +202,20 @@ echo $day=date('l',strtotime($datum));
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak" readonly></td>
-						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka"></td>
-						  <td><input type="text" class="form-control input-sm" name="duration" value="<?php echo $row2['duration']; ?>" id="trajanje" placeholder="HH:MM:SS"></td>
-						  <td valign="middle"><span class="label label-danger"> Pending </span></td>
+						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="<?php if($rowcount!=0){echo $stat['article']; $read="readonly";} else{echo ""; $read="";}?>" id="brClanaka" <?php echo $read; ?> ></td>
+						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="HH:MM:SS" <?php echo $read; ?>></td>
+						  <td valign="middle"><span class="label label-danger">  
+						  <?php
+						  if($rowcount==1){ echo "complete"; }
+							else{echo "pending"; }
+						  ?>
+						  </span></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>">Edit</button></td>
+						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
+						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>">Edit</button></td>
 						</form>
 							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 							  <div class="modal-dialog" role="document">
@@ -197,6 +230,9 @@ echo $day=date('l',strtotime($datum));
 									  <div class="form-group">
 										<label for="recipient-name" class="control-label">Broj clanaka:</label>
 										<input type="text" class="form-control" id="brClanak" name="editBrClanaka">
+										<input type="hidden" class="form-control" id="idArticleModal" name="idArticleModal">
+										<input type="hidden" class="form-control" id="idUserModal" name="idUserModal">
+										<input type="hidden" class="form-control" id="dateModal" name="dateModal">
 									  </div>
 									  <div class="form-group">
 										<label for="recipient-name" class="control-label">Trajanje:</label>
