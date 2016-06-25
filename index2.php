@@ -117,7 +117,7 @@ echo $day=date('l',strtotime($datum));
 				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date,
 				success: function(msg){
 					alert("succes"+msg);
-					 location.reload();
+					location.reload();
 				},
 				error: function(){
 					alert("failure");
@@ -127,7 +127,8 @@ echo $day=date('l',strtotime($datum));
 	});
 	</script>
 	<?php
-	if(isset($_POST['submit'])){
+	$info='';
+	if(isset($_POST['submit']) && !empty($_POST["submit"])){
 		if($_POST['rowCount']==0){
 			$user=$_POST['user'];
 			$name_tv=$_POST['name_tv'];
@@ -140,20 +141,21 @@ echo $day=date('l',strtotime($datum));
 			$idEmission=$_POST['idEmission'];
 			mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka')");
 		}
-		else{$info="Emisija je vec uneta u bazu, mozete je samo izmeniti";}
+		else{
+			$info="Emisija je vec uneta u bazu, mozete je samo izmeniti";
+			}	 
 	}
 	?>
   </head>
   <body>
     <h1>Hello, world!</h1>
 	<?php 
-	if(isset($info)){
 	if($info!=''){?>
-	<div class="alert alert-danger alert-dismissible" role="alert">
+	<div class="alert alert-danger alert-dismissible" role="alert" id="info">
 	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	  <strong>Warning!</strong> <?php echo $info; ?>
 	</div>
-	<?php }}?>
+	<?php }?>
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 	  <?php
 			  $i=0;
@@ -197,7 +199,7 @@ echo $day=date('l',strtotime($datum));
 					  $stat=mysqli_fetch_array($status);
 				  ?>
 					<tr>
-						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" name="action">
 						  <td></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
@@ -215,7 +217,7 @@ echo $day=date('l',strtotime($datum));
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>">Edit</button></td>
+						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>">Edit</button></td>
 						</form>
 							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 							  <div class="modal-dialog" role="document">
@@ -242,7 +244,7 @@ echo $day=date('l',strtotime($datum));
 								  </div>
 								  <div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									<input type="submit" class="btn btn-primary" value="submit" id="submit2">
+									<button type="button" class="btn btn-primary" value="submit2" id="submit2" name="submit2">Save</button>
 								  </div>
 								</div>
 							  </div>
