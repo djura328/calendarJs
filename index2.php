@@ -126,6 +126,14 @@ echo $day=date('l',strtotime($datum));
 		});
 	});
 	</script>
+	<script>
+    $(document).ready(function() {
+        function disableBack() { window.history.forward() }
+
+        window.onload = disableBack();
+        window.onpageshow = function(evt) { if (evt.persisted) disableBack() }
+    });
+	</script>
 	<?php
 	$info='';
 	if(isset($_POST['submit']) && !empty($_POST["submit"])){
@@ -139,7 +147,13 @@ echo $day=date('l',strtotime($datum));
 				$dan=date('l',strtotime($da));
 			$idUser=$_POST['idUser'];
 			$idEmission=$_POST['idEmission'];
-			mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka')");
+			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_user=$idUser AND id_emission=$idEmission");
+			if(mysqli_num_rows($ch)==1){
+				//
+			}
+			else{
+			mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete')");
+			}
 		}
 		else{
 			$info="Emisija je vec uneta u bazu, mozete je samo izmeniti";
@@ -151,10 +165,10 @@ echo $day=date('l',strtotime($datum));
     <h1>Hello, world!</h1>
 	<?php 
 	if($info!=''){?>
-	<div class="alert alert-danger alert-dismissible" role="alert" id="info">
+	<!--<div class="alert alert-danger alert-dismissible" role="alert" id="info">
 	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	  <strong>Warning!</strong> <?php echo $info; ?>
-	</div>
+	</div>-->
 	<?php }?>
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 	  <?php
@@ -162,13 +176,14 @@ echo $day=date('l',strtotime($datum));
 			  $result=mysqli_query($link,"SELECT DISTINCT user.first_name, user.last_name, user.id AS idUser FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE emission.day='$day'");
 			  while($row=mysqli_fetch_array($result)){
 	  ?>
-	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+	
 	  <div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="headingThree">
 		  <h4 class="panel-title">
-			<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree<?php echo $i; ?>" aria-expanded="false" aria-controls="collapseThree">
+			<a class="collaps" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree<?php echo $i; ?>" aria-expanded="false" aria-controls="collapseThree">
 			  <?php echo $row['first_name']; ?>
 			</a>
+			<p class="pull-right"><a href="index.html"><strong>Vrati se nazad</strong></a></p>
 		  </h4>
 		</div>
 		<div id="collapseThree<?php echo $i; ?>" class="panel-collapse collapse<?php if($user==$row['first_name'])echo "in"; ?>" role="tabpanel" aria-labelledby="headingThree">
@@ -188,9 +203,9 @@ echo $day=date('l',strtotime($datum));
 				 </thead>
 				  <tbody>
 				  <?php
-				  $ii=0;
+				  $ii=1;
 				  $id=$row['idUser'];
-				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
+				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  while($row2=mysqli_fetch_array($res)){
 					  $idEmisije=$row2['idEmission'];
 					  $idUser=$row2['idUser'];
@@ -203,21 +218,21 @@ echo $day=date('l',strtotime($datum));
 						  <td></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
-						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak" readonly></td>
+						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="<?php if($rowcount!=0){echo $stat['article']; $read="readonly";} else{echo ""; $read="";}?>" id="brClanaka" <?php echo $read; ?> ></td>
 						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="HH:MM:SS" <?php echo $read; ?>></td>
-						  <td valign="middle"><span class="label label-danger">  
+						  <td valign="middle">  
 						  <?php
-						  if($rowcount==1){ echo "complete"; }
-							else{echo "pending"; }
+						  if($rowcount==1){ echo "<span class='label label-success'>complete</span>"; }
+							else{echo "<span class='label label-warning'>pending</span>"; }
 						  ?>
-						  </span></td>
+						  </td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>">Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>">Edit</button></td>
+						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>" <?php if($rowcount==1){echo "disabled"; } ?>>Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>" <?php if($rowcount!=1){echo "disabled"; } ?>>Edit</button></td>
 						</form>
 							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 							  <div class="modal-dialog" role="document">
