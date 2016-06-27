@@ -116,7 +116,7 @@ echo $day=date('l',strtotime($datum));
 				url: "save.php", //process to mail
 				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date,
 				success: function(msg){
-					alert("succes"+msg);
+					alert(msg);
 					location.reload();
 				},
 				error: function(){
@@ -132,6 +132,20 @@ echo $day=date('l',strtotime($datum));
 
         window.onload = disableBack();
         window.onpageshow = function(evt) { if (evt.persisted) disableBack() }
+		
+		$('.napomena').change(function() {	
+			var index = $('.napomena').index( this );
+			index=parseInt(index) + 1;
+			var str = $( "#se"+index+" option:selected" ).val();
+			if(str==='Nije uradjeno'){
+				$('#napomena'+index).prop('readonly', false);
+			}
+			else{
+				$('#napomena'+index).prop('readonly', true);
+				$('#napomena'+index).val('');
+			}
+		});
+		
     });
 	</script>
 	<?php
@@ -147,13 +161,22 @@ echo $day=date('l',strtotime($datum));
 				$dan=date('l',strtotime($da));
 			$idUser=$_POST['idUser'];
 			$idEmission=$_POST['idEmission'];
+			$selekt=$_POST['se'];
+			$napomena=$_POST['napomena'];
+			
 			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_user=$idUser AND id_emission=$idEmission");
 			if(mysqli_num_rows($ch)==1){
 				//
 			}
 			else{
-			mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete')");
+				if($selekt=="Uradjeno"){
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena')");
+				}
+				else{
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena')");
+				}
 			}
+			
 		}
 		else{
 			$info="Emisija je vec uneta u bazu, mozete je samo izmeniti";
@@ -192,12 +215,13 @@ echo $day=date('l',strtotime($datum));
 				<thead>
 					<tr>
 					  <th>#</th>
-					  <th>Tv</th>
-					  <th>Emisija</th>
-					  <th>Vreme</th>
-					  <th>Broj clanaka</th>
-					  <th>Trajanje</th>
+					  <th>Naziv televizije/radija</th>
+					  <th>Naziv emisije</th>
+					  <th>Pocetak emisije</th>
+					  <th>Broj priloga</th>
+					  <th>Trajanje emisije</th>
 					  <th>Status</th>
+					  <th>Napomena</th>
 					  <th><span class="glyphicon glyphicon-cog"></span></th>
 					</tr>
 				 </thead>
@@ -223,10 +247,33 @@ echo $day=date('l',strtotime($datum));
 						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="HH:MM:SS" <?php echo $read; ?>></td>
 						  <td valign="middle">  
 						  <?php
-						  if($rowcount==1){ echo "<span class='label label-success'>complete</span>"; }
-							else{echo "<span class='label label-warning'>pending</span>"; }
+						  if($rowcount==1){ 
+						  $status2=mysqli_query($link, "SELECT status FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
+						  $stat2=mysqli_fetch_array($status2);
+						  $fav=$stat2['status'];
+							  switch ($fav) {
+									case "stuck":
+										echo "<span class='label label-danger'>stuck</span>";
+										break;
+									case "complete":
+										echo "<span class='label label-success'>complete</span>";
+										break;
+									case "edited":
+										echo "<span class='label label-info'>edit</span>";
+										break;
+										
+								}
+						   }
+						   else{echo "<span class='label label-warning'>pending</span>";}
 						  ?>
 						  </td>
+						  <td>
+							<select class="form-control napomena" id="se<?php echo $ii; ?>" name="se">
+								<option>Uradjeno</option>
+								<option>Nije uradjeno</option>
+							</select>
+						  </td>
+						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomena<?php echo $ii; ?>" readonly></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
