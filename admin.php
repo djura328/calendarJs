@@ -6,9 +6,11 @@ $name=$_POST['name'];
 $first=$_POST['first_date'];
 $second=$_POST['second_date'];
 echo "aaa";
-$query=mysqli_query($link, "SELECT * FROM `broadcast` INNER JOIN `user` ON user.id=broadcast.id_user WHERE (broadcast.date BETWEEN '$first' AND '$second') AND user.first_name='$name' AND broadcast.status='complete'");
+$query=mysqli_query($link, "SELECT * FROM `broadcast` INNER JOIN `user` ON user.id=broadcast.id_user WHERE (broadcast.date BETWEEN '$first' AND '$second') AND user.first_name='$name' AND (broadcast.status='complete' OR broadcast.status='edited')");
 while($res=mysqli_fetch_array($query)){
-	echo $res['id'];
+	echo "<p>" . $res['id'] . " ";
+	echo $res['duration'] . "</br></p>";
+	echo $res['article'] . "</br>";
 }
 }
 ?>
