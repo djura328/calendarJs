@@ -5,14 +5,7 @@ if(isset($_POST['submit'])){
 $name=$_POST['name'];
 $first=$_POST['first_date'];
 $second=$_POST['second_date'];
-echo "aaa";
-$query=mysqli_query($link, "SELECT * FROM `broadcast` INNER JOIN `user` ON user.id=broadcast.id_user WHERE (broadcast.date BETWEEN '$first' AND '$second') AND user.first_name='$name' AND (broadcast.status='complete' OR broadcast.status='edited')");
-while($res=mysqli_fetch_array($query)){
-	echo "<p>" . $res['id'] . " ";
-	echo $res['duration'] . "</br></p>";
-	echo $res['article'] . "</br>";
-}
-}
+$query=mysqli_query($link, "SELECT * FROM `broadcast` INNER JOIN `user` ON user.id=broadcast.id_user INNER JOIN `emission` ON user.id=emission.id_user WHERE (broadcast.date BETWEEN '$first' AND '$second') AND user.first_name='$name' AND (broadcast.status='complete' OR broadcast.status='edited')");
 ?>
 <html>
 <head>
@@ -28,9 +21,25 @@ while($res=mysqli_fetch_array($query)){
 	<link href="css/custom.css" rel="stylesheet">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-	
 </head>
 <body>
+<table border="1">
+
+<?php
+while($res=mysqli_fetch_array($query)){
+	echo "<tr>";
+	echo "<td>" . $res['first_name'] . "</td>";
+	echo "<td>" .$res['name_tv'] . "</td>";
+	echo "<td>" .$res['name_emission'] . "</td>";
+	echo "<td>" .$res['date'] . "</td>";
+	echo "<td>" .$res['day'] . "</td>";
+	echo "<td>" .$res['duration'] . "</td>";
+	echo "</tr>";
+}
+}
+?>
+</table>
+
 <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
 <select class="form-control" name="name">
 <?php
