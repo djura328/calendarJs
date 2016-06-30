@@ -147,6 +147,43 @@ echo $day=date('l',strtotime($datum));
 		});
 		
     });
+	$(document).ready(function(){
+		$('#add_name_tv').change(function(){
+			var a=$('#add_name_tv').val();
+			$.ajax({
+				type:"POST",
+				url:"add_new.php",
+				data:'name='+a,
+				success: function(msg){
+					$('#add_name_emission').html(msg);
+				},
+				error: function(){
+					alert("failure");
+				}
+			});
+		});
+	});
+	$(document).ready(function(){
+		$('#add_name_emission').change(function(){
+			var a=$('#add_name_emission').val();
+			var b=$('#add_name_tv').val();
+			$.ajax({
+				type:"POST",
+				dataType: "json",
+				url:"add_info.php",
+				data:'name='+b+'&name_emission='+a,
+				success: function(msg){
+					$('#add_form,#pocetak').val(msg.a);
+					$('#add_form,#duration').val(msg.b);
+					$('#add_form,#idEmission').val(msg.c);
+					
+				},
+				error: function(){
+					alert("failure");
+				}
+			});
+		});
+	});
 	</script>
 	<?php
 	$info='';
@@ -231,6 +268,7 @@ echo $day=date('l',strtotime($datum));
 				  $id=$row['idUser'];
 				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  while($row2=mysqli_fetch_array($res)){
+					  $name_user=$row2['first_name'];
 					  $idEmisije=$row2['idEmission'];
 					  $idUser=$row2['idUser'];
 					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
@@ -276,7 +314,7 @@ echo $day=date('l',strtotime($datum));
 						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomena<?php echo $ii; ?>" readonly></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
-						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission']; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission'];?>" >
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
 						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>" <?php if($rowcount==1){echo "disabled"; } ?>>Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>" <?php if($rowcount!=1){echo "disabled"; } ?>>Edit</button></td>
@@ -316,6 +354,48 @@ echo $day=date('l',strtotime($datum));
 				  $ii++;
 				  }
 				  ?>
+				  <?php
+				  
+				  ?>
+					<tr>
+						<form action="add_emission.php" method="POST" name="add_form" id="add_form">
+						  <td></td>
+						  <td>
+							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
+								<option></option>
+									<?php
+									$find=mysqli_query($link, "SELECT name_tv FROM `emission`");
+									while($fi=mysqli_fetch_array($find)){
+										echo "<option>" .$fi['name_tv'] . "</option>";
+									}
+									?>
+							  </select>
+						  </td>
+						  <td>
+						  <select class="form-control input-sm" name="name_emission" value="" id="add_name_emission">
+								<option></option>
+						  </select>
+						  </td>
+						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak" readonly></td>
+						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka"></td>
+						  <td><input type="text" class="form-control input-sm" name="duration"  value="" placeholder="HH:MM:SS" id="duration"></td>
+						  <td valign="middle">  
+						  </td>
+						  <td>
+							<select class="form-control napomena" id="se<?php echo $ii; ?>" name="se">
+								<option value="0">Uradjeno</option>
+								<option value="1">Nije uradjeno</option>
+							</select>
+						  </td>
+						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomena<?php echo $ii; ?>" readonly></td>
+						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $name_user; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $idUser; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idEmission" value="" id="idEmission">
+						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
+						  <input type="hidden" class="form-control input-sm" name="rowCount" value="">
+						  <td><button type="submit" class="btn btn-primary" id="submit " name="submit" value="<?php echo $ii; ?>" >Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="" data-name_emission="" data-duration="" data-article="" data-id_user="" data-date="">Edit</button></td>
+						</form>
+					</tr>
 				  </tbody>
 			</table>
 		  </div>
