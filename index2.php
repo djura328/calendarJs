@@ -234,14 +234,14 @@ echo $day=date('l',strtotime($datum));
 	  <?php
 			  $i=0;
 			  $result=mysqli_query($link,"SELECT DISTINCT user.first_name, user.last_name, user.id AS idUser FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE emission.day='$day'");
-			  while($row=mysqli_fetch_array($result)){
+			  while($row=mysqli_fetch_array($result)){	
 	  ?>
 	
 	  <div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="headingThree">
 		  <h4 class="panel-title">
 			<a class="collaps" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree<?php echo $i; ?>" aria-expanded="false" aria-controls="collapseThree">
-			  <?php echo $row['first_name']; ?>
+			  <?php echo $asd=$row['first_name']; ?>
 			</a>
 			<p class="pull-right"><a href="index.html"><strong>Vrati se nazad</strong></a></p>
 		  </h4>
@@ -266,11 +266,17 @@ echo $day=date('l',strtotime($datum));
 				  <?php
 				  $ii=1;
 				  $id=$row['idUser'];
-				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
+				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
+				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `broadcast` INNER JOIN `emission` ON broadcast.id_emission=emission.id INNER JOIN `user` ON broadcast.id_user=user.id WHERE emission.id IN (SELECT id FROM `emission` UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id ) AND broadcast.date='$datum' AND broadcast.id_user=$id");
+				  //$res=mysqli_query($link, "SELECT name_tv FROM `emission` WHERE id IN (SELECT id FROM `emission` WHERE emission.id_user=1 UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=1 AND date='2016-06-16')");
+				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, broadcast.id_user FROM `emission` INNER JOIN `broadcast` ON emission.id=broadcast.id_emission WHERE broadcast.date='$datum' AND emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum')");
 				  while($row2=mysqli_fetch_array($res)){
-					  $name_user=$row2['first_name'];
-					  $idEmisije=$row2['idEmission'];
-					  $idUser=$row2['idUser'];
+					  //$name_user=$row2['first_name'];
+					  $name_user=$asd;
+					  //$idEmisije=$row2['idEmission'];
+					  $idEmisije=$row2['id'];
+					  //$idUser=$row2['idUser'];
+					  $idUser=$row2['id_user'];
 					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
 					  $rowcount=mysqli_num_rows($status);
 					  $stat=mysqli_fetch_array($status);
