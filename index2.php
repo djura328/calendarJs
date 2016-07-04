@@ -117,7 +117,7 @@ echo $day=date('l',strtotime($datum));
 				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date,
 				success: function(msg){
 					alert(msg);
-					location.reload();
+					location.reload();		
 				},
 				error: function(){
 					alert("failure");
@@ -147,8 +147,22 @@ echo $day=date('l',strtotime($datum));
 		});
 		
     });
+	$(document).ready(function() {
+		$('#seAdd').change(function() {	
+			var str = $( "#seAdd option:selected" ).val();
+			if(str==='Nije uradjeno'){
+				$('#napomenaAdd').prop('readonly', false);
+			}
+			else{
+				$('#napomenaAdd').prop('readonly', true);
+				$('#napomenaAdd').val('');
+			}
+		});
+		
+    });
 	$(document).ready(function(){
 		$('#add_name_tv').change(function(){
+			//var index = $('#add_name_tv').index( this );
 			var a=$('#add_name_tv').val();
 			$.ajax({
 				type:"POST",
@@ -186,7 +200,6 @@ echo $day=date('l',strtotime($datum));
 	});
 	</script>
 	<?php
-	$info='';
 	if(isset($_POST['submit']) && !empty($_POST["submit"])){
 		if($_POST['rowCount']==0){
 			$user=$_POST['user'];
@@ -223,31 +236,13 @@ echo $day=date('l',strtotime($datum));
   </head>
   <body>
     <h1>Hello, world!</h1>
-	<?php 
-	if($info!=''){?>
+	<?php
+	//if($info!=''){?>
 	<!--<div class="alert alert-danger alert-dismissible" role="alert" id="info">
 	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	  <strong>Warning!</strong> <?php echo $info; ?>
 	</div>-->
-	<?php }?>
-	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-	  <?php
-			  $i=0;
-			  $result=mysqli_query($link,"SELECT DISTINCT user.first_name, user.last_name, user.id AS idUser FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE emission.day='$day'");
-			  while($row=mysqli_fetch_array($result)){	
-	  ?>
-	
-	  <div class="panel panel-default">
-		<div class="panel-heading" role="tab" id="headingThree">
-		  <h4 class="panel-title">
-			<a class="collaps" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree<?php echo $i; ?>" aria-expanded="false" aria-controls="collapseThree">
-			  <?php echo $asd=$row['first_name']; ?>
-			</a>
-			<p class="pull-right"><a href="index.html"><strong>Vrati se nazad</strong></a></p>
-		  </h4>
-		</div>
-		<div id="collapseThree<?php echo $i; ?>" class="panel-collapse collapse<?php if($user==$row['first_name'])echo "in"; ?>" role="tabpanel" aria-labelledby="headingThree">
-		  <div class="panel-body list">
+	<?php //}?>
 			<table class="table table-hover table-bordered">
 				<thead>
 					<tr>
@@ -260,23 +255,25 @@ echo $day=date('l',strtotime($datum));
 					  <th>Status</th>
 					  <th>Napomena</th>
 					  <th><span class="glyphicon glyphicon-cog"></span></th>
+					  <th></th>
 					</tr>
 				 </thead>
 				  <tbody>
 				  <?php
 				  $ii=1;
-				  $id=$row['idUser'];
+				  $id=1;
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `broadcast` INNER JOIN `emission` ON broadcast.id_emission=emission.id INNER JOIN `user` ON broadcast.id_user=user.id WHERE emission.id IN (SELECT id FROM `emission` UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id ) AND broadcast.date='$datum' AND broadcast.id_user=$id");
 				  //$res=mysqli_query($link, "SELECT name_tv FROM `emission` WHERE id IN (SELECT id FROM `emission` WHERE emission.id_user=1 UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=1 AND date='2016-06-16')");
-				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, broadcast.id_user FROM `emission` INNER JOIN `broadcast` ON emission.id=broadcast.id_emission WHERE broadcast.date='$datum' AND emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum')");
+				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, broadcast.id_user FROM `emission` INNER JOIN `broadcast` ON emission.id=broadcast.id_emission WHERE broadcast.date='$datum' AND emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum')");
+				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, emission.duration FROM `emission` WHERE emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum')");
 				  while($row2=mysqli_fetch_array($res)){
 					  //$name_user=$row2['first_name'];
-					  $name_user=$asd;
+					  $name_user=1;
 					  //$idEmisije=$row2['idEmission'];
 					  $idEmisije=$row2['id'];
 					  //$idUser=$row2['idUser'];
-					  $idUser=$row2['id_user'];
+					  $idUser=1;//user sa sesije
 					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
 					  $rowcount=mysqli_num_rows($status);
 					  $stat=mysqli_fetch_array($status);
@@ -305,6 +302,9 @@ echo $day=date('l',strtotime($datum));
 									case "edited":
 										echo "<span class='label label-info'>edit</span>";
 										break;
+									case "changed":
+										echo "<span class='label label-primary'>changed</span>";
+									break;
 										
 								}
 						   }
@@ -388,12 +388,12 @@ echo $day=date('l',strtotime($datum));
 						  <td valign="middle">  
 						  </td>
 						  <td>
-							<select class="form-control napomena" id="se<?php echo $ii; ?>" name="se">
-								<option value="0">Uradjeno</option>
-								<option value="1">Nije uradjeno</option>
+							<select class="form-control napomena" id="seAdd" name="se">
+								<option>Uradjeno</option>
+								<option>Nije uradjeno</option>
 							</select>
 						  </td>
-						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomena<?php echo $ii; ?>" readonly></td>
+						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomenaAdd" readonly></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $name_user; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $idUser; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="" id="idEmission">
@@ -404,14 +404,9 @@ echo $day=date('l',strtotime($datum));
 					</tr>
 				  </tbody>
 			</table>
-		  </div>
-		</div>
-	  </div>
-	  <?php
-	  $i++;
-	  }
-	  ?>
-	</div>
+
+	 
+	
 	
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
