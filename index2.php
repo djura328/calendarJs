@@ -209,8 +209,8 @@ echo $day=date('l',strtotime($datum));
 			$duration=$_POST['duration'];
 			$da=$_POST['datum'];
 				$dan=date('l',strtotime($da));
-			$idUser=$_POST['idUser'];
-			$idEmission=$_POST['idEmission'];
+			echo $idUser=$_POST['idUser'];
+			echo $idEmission=$_POST['idEmission'];
 			$selekt=$_POST['se'];
 			$napomena=$_POST['napomena'];
 			
@@ -284,7 +284,7 @@ echo $day=date('l',strtotime($datum));
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
-						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="<?php if($rowcount!=0){echo $stat['article']; $read="readonly";} else{echo ""; $read="";}?>" id="brClanaka" <?php echo $read; ?> ></td>
+						  <td><input type="text" class="form-control input-sm" name="brClanaka" required="required" value="<?php if($rowcount!=0){echo $stat['article']; $read="readonly";} else{echo ""; $read="";}?>" id="brClanaka" <?php echo $read; ?> ></td>
 						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="HH:MM:SS" <?php echo $read; ?>></td>
 						  <td valign="middle">  
 						  <?php
@@ -311,16 +311,21 @@ echo $day=date('l',strtotime($datum));
 						   else{echo "<span class='label label-warning'>pending</span>";}
 						  ?>
 						  </td>
+						  <?php
+						  $napomena=mysqli_query($link, "SELECT napomena FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije AND id_user=$idUser");
+						  $nap=mysqli_fetch_array($napomena);
+						  ?>
 						  <td>
 							<select class="form-control napomena" id="se<?php echo $ii; ?>" name="se">
 								<option>Uradjeno</option>
 								<option>Nije uradjeno</option>
 							</select>
 						  </td>
-						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomena<?php echo $ii; ?>" readonly></td>
+						  <td>
+						  <input type="text" class="form-control input-sm napomena2" name="napomena" required="required" value="<?php echo $nap['napomena']; ?>" id="napomena<?php echo $ii; ?>" readonly></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $row2['first_name']; ?>">
-						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $row2['idUser']; ?>">
-						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $row2['idEmission'];?>" >
+						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $idUser; ?>">
+						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $idEmisije;?>" >
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
 						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>" <?php if($rowcount==1){echo "disabled"; } ?>>Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>" <?php if($rowcount!=1){echo "disabled"; } ?>>Edit</button></td>
