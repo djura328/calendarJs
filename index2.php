@@ -273,7 +273,9 @@ echo $day=date('l',strtotime($datum));
 					  //$idEmisije=$row2['idEmission'];
 					  $idEmisije=$row2['id'];
 					  //$idUser=$row2['idUser'];
-					  $idUser=1;//user sa sesije
+// User sa sesije se ubacuje ======================================================================================================
+					  $idUser=1;
+//================================================================================================================================
 					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
 					  $rowcount=mysqli_num_rows($status);
 					  $stat=mysqli_fetch_array($status);
