@@ -2,7 +2,12 @@
 include "connector.php";
 echo $datum=$_REQUEST['datum'];
 echo $day=date('l',strtotime($datum));
+if(isset($_GET['info'])){
 $info=$_GET['info'];
+}
+else{
+$info="";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -263,6 +268,9 @@ $info=$_GET['info'];
 				  <?php
 				  $ii=1;
 				  $id=1;
+// User sa sesije se ubacuje ======================================================================================================
+					  echo $idUser=1;
+//================================================================================================================================
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `user` INNER JOIN `emission` ON user.id=emission.id_user WHERE user.id=$id");
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `broadcast` INNER JOIN `emission` ON broadcast.id_emission=emission.id INNER JOIN `user` ON broadcast.id_user=user.id WHERE emission.id IN (SELECT id FROM `emission` UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id ) AND broadcast.date='$datum' AND broadcast.id_user=$id");
 				  //$res=mysqli_query($link, "SELECT name_tv FROM `emission` WHERE id IN (SELECT id FROM `emission` WHERE emission.id_user=1 UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=1 AND date='2016-06-16')");
@@ -275,7 +283,7 @@ $info=$_GET['info'];
 					  $idEmisije=$row2['id'];
 					  //$idUser=$row2['idUser'];
 // User sa sesije se ubacuje ======================================================================================================
-					  $idUser=1;
+					  //echo $idUser=1;
 //================================================================================================================================
 					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
 					  $rowcount=mysqli_num_rows($status);
@@ -378,7 +386,7 @@ $info=$_GET['info'];
 							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
 								<option></option>
 									<?php
-									$find=mysqli_query($link, "SELECT DISTINCT  name_tv FROM `emission`");
+									$find=mysqli_query($link, "SELECT DISTINCT  name_tv FROM `emission` WHERE day LIKE '%$day%'");
 									while($fi=mysqli_fetch_array($find)){
 										echo "<option>" .$fi['name_tv'] . "</option>";
 									}
