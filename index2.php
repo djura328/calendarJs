@@ -2,6 +2,7 @@
 include "connector.php";
 echo $datum=$_REQUEST['datum'];
 echo $day=date('l',strtotime($datum));
+$info=$_GET['info'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -187,9 +188,9 @@ echo $day=date('l',strtotime($datum));
 				url:"add_info.php",
 				data:'name='+b+'&name_emission='+a,
 				success: function(msg){
-					$('#add_form,#pocetak').val(msg.a);
-					$('#add_form,#duration').val(msg.b);
-					$('#add_form,#idEmission').val(msg.c);
+					$('#pocetak').val(msg.a);
+					$('#duration').val(msg.b);
+					$('#idEmission').val(msg.c);
 					
 				},
 				error: function(){
@@ -237,12 +238,12 @@ echo $day=date('l',strtotime($datum));
   <body>
     <h1>Hello, world!</h1>
 	<?php
-	//if($info!=''){?>
-	<!--<div class="alert alert-danger alert-dismissible" role="alert" id="info">
+	if($info!=''){?>
+	<div class="alert alert-danger alert-dismissible" role="alert" id="info">
 	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	  <strong>Warning!</strong> <?php echo $info; ?>
-	</div>-->
-	<?php //}?>
+	</div>
+	<?php }?>
 			<table class="table table-hover table-bordered">
 				<thead>
 					<tr>
@@ -377,7 +378,7 @@ echo $day=date('l',strtotime($datum));
 							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
 								<option></option>
 									<?php
-									$find=mysqli_query($link, "SELECT name_tv FROM `emission`");
+									$find=mysqli_query($link, "SELECT DISTINCT  name_tv FROM `emission`");
 									while($fi=mysqli_fetch_array($find)){
 										echo "<option>" .$fi['name_tv'] . "</option>";
 									}
@@ -389,9 +390,9 @@ echo $day=date('l',strtotime($datum));
 								<option></option>
 						  </select>
 						  </td>
-						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak" readonly></td>
-						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka"></td>
-						  <td><input type="text" class="form-control input-sm" name="duration"  value="" placeholder="HH:MM:SS" id="duration"></td>
+						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak1" readonly></td>
+						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka1"></td>
+						  <td><input type="text" class="form-control input-sm" name="duration"  value="" placeholder="HH:MM:SS" id="duration1"></td>
 						  <td valign="middle">  
 						  </td>
 						  <td>
