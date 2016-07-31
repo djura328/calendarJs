@@ -219,6 +219,7 @@ $info="";
 			echo $idEmission=$_POST['idEmission'];
 			$selekt=$_POST['se'];
 			$napomena=$_POST['napomena'];
+			$datum_objave=$_POST['datum_objave'];
 			
 			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_user=$idUser AND id_emission=$idEmission");
 			if(mysqli_num_rows($ch)==1){
@@ -226,10 +227,10 @@ $info="";
 			}
 			else{
 				if($selekt=="Uradjeno"){
-				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena')");
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena', '$datum_objave')");
 				}
 				else{
-				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena')");
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena', '$datum_objave')");
 				}
 			}
 			
@@ -253,6 +254,7 @@ $info="";
 				<thead>
 					<tr>
 					  <th>#</th>
+					  <th>Dutum objave</th>
 					  <th>Naziv televizije/radija</th>
 					  <th>Naziv emisije</th>
 					  <th>Pocetak emisije</th>
@@ -292,11 +294,12 @@ $info="";
 					<tr>
 						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" name="action">
 						  <td></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> id="trajanje" placeholder="Min" name="datum_objave" id="datum_objave"></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="brClanaka" required="required" value="<?php if($rowcount!=0){echo $stat['article']; $read="readonly";} else{echo ""; $read="";}?>" id="brClanaka" <?php echo $read; ?> ></td>
-						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="HH:MM:SS" <?php echo $read; ?>></td>
+						  <td><input type="text" class="form-control input-sm" name="duration"  value="<?php if($rowcount!=0){echo $stat['duration']; $read="readonly";} else{echo $row2['duration']; $read="";} ?>" id="trajanje" placeholder="Min" <?php echo $read; ?>></td>
 						  <td valign="middle">  
 						  <?php
 						  if($rowcount==1){ 
@@ -382,11 +385,12 @@ $info="";
 					<tr>
 						<form action="add_emission.php" method="POST" name="add_form" id="add_form">
 						  <td></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php echo $datum; ?>"></td>
 						  <td>
 							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
 								<option></option>
 									<?php
-									$find=mysqli_query($link, "SELECT DISTINCT  name_tv FROM `emission` WHERE day LIKE '%$day%'");
+									$find=mysqli_query($link, "SELECT DISTINCT  name_tv FROM `emission`");
 									while($fi=mysqli_fetch_array($find)){
 										echo "<option>" .$fi['name_tv'] . "</option>";
 									}
@@ -400,7 +404,7 @@ $info="";
 						  </td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="" id="pocetak1" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="brClanaka" value="" id="brClanaka1"></td>
-						  <td><input type="text" class="form-control input-sm" name="duration"  value="" placeholder="HH:MM:SS" id="duration1"></td>
+						  <td><input type="text" class="form-control input-sm" name="duration"  value="" placeholder="Min" id="duration1"></td>
 						  <td valign="middle">  
 						  </td>
 						  <td>
