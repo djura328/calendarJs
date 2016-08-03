@@ -277,7 +277,7 @@ $info="";
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.name_emission, emission.duration, user.first_name, user.id AS idUser, emission.id AS idEmission, emission.time FROM `broadcast` INNER JOIN `emission` ON broadcast.id_emission=emission.id INNER JOIN `user` ON broadcast.id_user=user.id WHERE emission.id IN (SELECT id FROM `emission` UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id ) AND broadcast.date='$datum' AND broadcast.id_user=$id");
 				  //$res=mysqli_query($link, "SELECT name_tv FROM `emission` WHERE id IN (SELECT id FROM `emission` WHERE emission.id_user=1 UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=1 AND date='2016-06-16')");
 				  //$res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, broadcast.id_user FROM `emission` INNER JOIN `broadcast` ON emission.id=broadcast.id_emission WHERE broadcast.date='$datum' AND emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum')");
-				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, emission.duration FROM `emission` WHERE emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date='$datum') AND emission.day LIKE '%$day%'");
+				  $res=mysqli_query($link, "SELECT emission.name_tv, emission.time, emission.name_emission, emission.id, emission.duration FROM `emission` WHERE emission.id IN (SELECT id FROM `emission` WHERE emission.id_user=$id UNION SELECT id_emission FROM `broadcast` WHERE broadcast.id_user=$id AND date_publish='$datum') AND emission.day LIKE '%$day%'");
 				  while($row2=mysqli_fetch_array($res)){
 					  //$name_user=$row2['first_name'];
 					  $name_user=1;
@@ -287,14 +287,14 @@ $info="";
 // User sa sesije se ubacuje ======================================================================================================
 					  //echo $idUser=1;
 //================================================================================================================================
-					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
+					  $status=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date_publish='$datum' AND id_emission=$idEmisije");
 					  $rowcount=mysqli_num_rows($status);
 					  $stat=mysqli_fetch_array($status);
 				  ?>
 					<tr>
 						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" name="action">
 						  <td></td>
-						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> placeholder="Min" name="datum_objave" id="datum_objave"></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> id="trajanje" placeholder="Min" name="datum_objave" id="datum_objave"></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
@@ -326,7 +326,7 @@ $info="";
 						  ?>
 						  </td>
 						  <?php
-						  $napomena=mysqli_query($link, "SELECT napomena FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije AND id_user=$idUser");
+						  $napomena=mysqli_query($link, "SELECT napomena FROM `broadcast` WHERE date_publish='$datum' AND id_emission=$idEmisije AND id_user=$idUser");
 						  $nap=mysqli_fetch_array($napomena);
 						  ?>
 						  <td>
@@ -385,8 +385,7 @@ $info="";
 					<tr>
 						<form action="add_emission.php" method="POST" name="add_form" id="add_form">
 						  <td></td>
-						  <td><input type="date" class="form-control input-sm" value="<?php ?>" placeholder="Min" name="datum_objave1" id="datum_objave1"></td>
-						  <td><input type="date" class="form-control input-sm" value="<?php echo $datum; ?>"></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php echo $datum; ?>" name="datum_objave" id="datum_objave"></td>
 						  <td>
 							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
 								<option></option>
