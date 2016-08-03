@@ -303,7 +303,7 @@ $info="";
 						  <td valign="middle">  
 						  <?php
 						  if($rowcount==1){ 
-						  $status2=mysqli_query($link, "SELECT status FROM `broadcast` WHERE date='$datum' AND id_emission=$idEmisije");
+						  $status2=mysqli_query($link, "SELECT status FROM `broadcast` WHERE date_publish='$datum' AND id_emission=$idEmisije");
 						  $stat2=mysqli_fetch_array($status2);
 						  $fav=$stat2['status'];
 							  switch ($fav) {
