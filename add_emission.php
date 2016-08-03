@@ -2,17 +2,28 @@
 include "connector.php";
 	if(isset($_POST['submit']) && !empty($_POST["submit"])){
 		//if($_POST['rowCount']==0){
-			$user=$_POST['user'];
-			$name_tv=$_POST['name_tv'];
-			$name_emission=$_POST['name_emission'];
-			$brClanaka=$_POST['brClanaka'];
-			$duration=$_POST['duration'];
+			echo $user=$_POST['user'];
+			//echo "</br>";
+			echo $name_tv=$_POST['name_tv'];
+			//echo "</br>";
+			echo $name_emission=$_POST['name_emission'];
+			//echo "</br>";
+			echo $brClanaka=$_POST['brClanaka'];
+			//echo "</br>";
+			echo $duration=$_POST['duration'];
+			//echo "</br>";
 			echo $da=$_POST['datum'];
+			//echo "</br>";
 				$dan=date('l',strtotime($da));
 			echo $idUser=$_POST['idUser'];
+			//echo "</br>";
 			echo $idEmission=$_POST['idEmission'];
-			$selekt=$_POST['se'];
-			$napomena=$_POST['napomena'];
+			//echo "</br>";
+			echo $selekt=$_POST['se'];
+			//echo "</br>";
+			echo $napomena=$_POST['napomena'];
+			//echo "</br>";
+			echo $date_publish=$_POST['datum_objave'];
 			
 			//$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_user='$idUser' AND id_emission='$idEmission'");
 			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_emission='$idEmission'");
@@ -23,14 +34,14 @@ include "connector.php";
 			}
 			else{
 				if($selekt==0){
-				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena')");
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena', '$date_publish')");
 				header("Location: index2.php?datum=$da");
 				echo "2";
 				}
 				else{
-				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena')");
+				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena', '$date_publish')");
 				header("Location: index2.php?datum=$da");
-				//echo "3";
+				echo "3";
 				}
 			}
 			
