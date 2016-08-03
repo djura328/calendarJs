@@ -35,12 +35,14 @@ include "connector.php";
 			else{
 				if($selekt==0){
 				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena', '$date_publish')");
-				header("Location: index2.php?datum=$da");
+				$info="Emisija je uspesno uneta";
+				header("Location: index2.php?datum=$da&info=$info");
 				echo "2";
 				}
 				else{
 				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena', '$date_publish')");
-				header("Location: index2.php?datum=$da");
+				$info="Emisija je uspesno uneta";
+				header("Location: index2.php?datum=$da&info=$info");
 				echo "3";
 				}
 			}
