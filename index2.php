@@ -294,7 +294,7 @@ $info="";
 					<tr>
 						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" name="action">
 						  <td></td>
-						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> id="trajanje" placeholder="Min" name="datum_objave" id="datum_objave"></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> placeholder="Min" name="datum_objave" id="datum_objave"></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
@@ -385,6 +385,7 @@ $info="";
 					<tr>
 						<form action="add_emission.php" method="POST" name="add_form" id="add_form">
 						  <td></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php ?>" placeholder="Min" name="datum_objave1" id="datum_objave1"></td>
 						  <td><input type="date" class="form-control input-sm" value="<?php echo $datum; ?>"></td>
 						  <td>
 							  <select class="form-control input-sm" name="name_tv" value="" id="add_name_tv">
