@@ -193,9 +193,9 @@ $info="";
 				url:"add_info.php",
 				data:'name='+b+'&name_emission='+a,
 				success: function(msg){
-					$('#pocetak').val(msg.a);
-					$('#duration').val(msg.b);
-					$('#idEmission').val(msg.c);
+					$('#pocetak1').val(msg.a);
+					$('#duration1').val(msg.b);
+					$('#idEmission1').val(msg.c);
 					
 				},
 				error: function(){
