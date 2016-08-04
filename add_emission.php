@@ -29,20 +29,20 @@ include "connector.php";
 			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_emission='$idEmission'");
 			if(mysqli_num_rows($ch)==1){
 				$info="Emisija je vec uradjena";
-				//header("Location: index2.php?datum=$da&info=$info");
+				header("Location: index2.php?datum=$da&info=$info");
 				echo "1";
 			}
 			else{
 				if($selekt==0){
 				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '$duration', '$brClanaka', 'complete', '$napomena', '$date_publish')");
-				$info="Emisija je uspesno uneta";
-				//header("Location: index2.php?datum=$da&info=$info");
+				$info="Emisija je uspesno uneta u bazu pod " . $date_publish . " datumom";
+				header("Location: index2.php?datum=$da&info=$info");
 				echo "2";
 				}
 				else{
 				mysqli_query($link, "INSERT INTO `broadcast` (id_user, id_emission, date, duration, article, status, napomena, date_publish) VALUES ('$idUser', '$idEmission', '$da', '0', '0', 'stuck', '$napomena', '$date_publish')");
-				$info="Emisija je uspesno uneta";
-				//header("Location: index2.php?datum=$da&info=$info");
+				$info="Emisija je uspesno uneta u bazu pod " . $date_publish . " datumom";
+				header("Location: index2.php?datum=$da&info=$info");
 				echo "3";
 				}
 			}
