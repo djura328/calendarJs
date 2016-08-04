@@ -1,5 +1,6 @@
 <?php
 include "connector.php";
+mysqli_set_charset($link,"utf8");
 echo $datum=$_REQUEST['datum'];
 echo $day=date('l',strtotime($datum));
 if(isset($_GET['info'])){
@@ -101,6 +102,7 @@ $info="";
 		  var idUser= button.data('id_user');
 		  var idArtice= button.data('id_article');
 		  var date= button.data('date');
+		  var date_publish= button.data('date_publish');
 		  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
 		  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 		  var modal = $(this);
@@ -110,6 +112,7 @@ $info="";
 		  modal.find('.modal-body input[name=idUserModal]').val(idUser);
 		  modal.find('.modal-body input[name=idArticleModal]').val(idArtice);
 		  modal.find('.modal-body input[name=dateModal]').val(date);
+		  modal.find('.modal-body input[name=date_publish]').val(date_publish);
 		});
 		$("#submit2").click(function(){
 			var brClanaka=$('#brClanak').val();
@@ -117,10 +120,11 @@ $info="";
 			var idUser=$('#idUserModal').val();
 			var idArticle=$('#idArticleModal').val();
 			var date=$('#dateModal').val();
+			var date_publish=$('#date_publish').val();
 			$.ajax({
 				type: "POST",
 				url: "save.php", //process to mail
-				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date,
+				data: 'brClanaka='+brClanaka+'&trajanje='+trajanje+'&idUser='+idUser+'&idArticle='+idArticle+'&date='+date+'&date_publish='+date_publish,
 				success: function(msg){
 					alert(msg);
 					location.reload();		
@@ -254,7 +258,7 @@ $info="";
 				<thead>
 					<tr>
 					  <th>#</th>
-					  <th>Dutum objave</th>
+					  <th>Datum objave</th>
 					  <th>Naziv televizije/radija</th>
 					  <th>Naziv emisije</th>
 					  <th>Pocetak emisije</th>
@@ -294,7 +298,7 @@ $info="";
 					<tr>
 						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" name="action">
 						  <td></td>
-						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> id="trajanje" placeholder="Min" name="datum_objave" id="datum_objave"></td>
+						  <td><input type="date" class="form-control input-sm" value="<?php if($rowcount!=0){echo $stat['date_publish']; $read="readonly";} else{echo $datum; $read="";} ?>" <?php echo $read; ?> id="trajanje" placeholder="Min" name="datum_objave" id="datum_objave" readonly></td>
 						  <td><input type="text" class="form-control input-sm" name="name_tv" value="<?php echo $row2['name_tv']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="name_emission" value="<?php echo $row2['name_emission']; ?>" readonly ></td>
 						  <td><input type="text" class="form-control input-sm" name="pocetak" value="<?php echo $row2['time']; ?>" id="pocetak" readonly></td>
@@ -342,7 +346,7 @@ $info="";
 						  <input type="hidden" class="form-control input-sm" name="idEmission" value="<?php echo $idEmisije;?>" >
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="<?php echo $rowcount; ?>">
-						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>" <?php if($rowcount==1){echo "disabled"; } ?>>Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>" <?php if($rowcount!=1){echo "disabled"; } ?>>Edit</button></td>
+						  <td><button type="submit" class="btn btn-primary" id="submit<?php echo $ii; ?>" name="submit" value="<?php echo $ii; ?>" <?php if($rowcount==1){echo "disabled"; } ?>>Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="<?php echo $row2['name_tv']; ?>" data-name_emission="<?php echo $row2['name_emission']; ?>" data-duration="<?php echo $row2['duration']; ?>" data-article="<?php if($rowcount!=0){echo $stat['article']; }?>" data-id_user="<?php echo $idUser; ?>" data-id_article="<?php echo $idEmisije; ?>" data-date="<?php echo $datum; ?>" <?php if($rowcount!=1){echo "disabled"; } ?> data-date_publish="<?php echo $stat['date_publish']; ?>">Edit</button></td>
 						</form>
 							<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 							  <div class="modal-dialog" role="document">
@@ -364,6 +368,10 @@ $info="";
 									  <div class="form-group">
 										<label for="recipient-name" class="control-label">Trajanje:</label>
 										<input type="text" class="form-control" id="trajanje" name="editTrajanje">
+									  </div>
+									  <div class="form-group">
+										<label for="recipient-name" class="control-label" style="color:red;">Datum objave:</label>
+										<input type="date" class="form-control" id="date_publish" name="date_publish">
 									  </div>
 									</form>
 								  </div>
@@ -416,7 +424,7 @@ $info="";
 						  <td><input type="text" class="form-control input-sm napomena2" name="napomena" id="napomenaAdd" readonly></td>
 						  <input type="hidden" class="form-control input-sm" name="user" value="<?php echo $name_user; ?>">
 						  <input type="hidden" class="form-control input-sm" name="idUser" value="<?php echo $idUser; ?>">
-						  <input type="hidden" class="form-control input-sm" name="idEmission" value="" id="idEmission">
+						  <input type="hidden" class="form-control input-sm" name="idEmission" value="" id="idEmission1">
 						  <input type="hidden" class="form-control input-sm" name="datum" value="<?php echo $datum; ?>">
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="">
 						  <td><button type="submit" class="btn btn-primary" id="submit " name="submit" value="<?php echo $ii; ?>" >Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="" data-name_emission="" data-duration="" data-article="" data-id_user="" data-date="">Edit</button></td>
