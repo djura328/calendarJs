@@ -1,5 +1,6 @@
 <?php
 include "connector.php";
+mysqli_set_charset($link,"utf8");
 $name=$_POST['name'];
 $name_emission=$_POST['name_emission'];
 
@@ -11,5 +12,5 @@ while($row=mysqli_fetch_array($query)){
 }
 
 
-echo json_encode($return_data);
+echo json_encode($return_data, JSON_UNESCAPED_UNICODE);
 ?>
