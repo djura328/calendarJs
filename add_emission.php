@@ -26,7 +26,7 @@ include "connector.php";
 			echo $date_publish=$_POST['datum_objave'];
 			
 			//$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_user='$idUser' AND id_emission='$idEmission'");
-			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date='$da' AND id_emission='$idEmission'");
+			$ch=mysqli_query($link, "SELECT id FROM `broadcast` WHERE date_publish='$date_publish' AND id_emission='$idEmission'");
 			if(mysqli_num_rows($ch)==1){
 				$info="Emisija je vec uradjena";
 				header("Location: index2.php?datum=$da&info=$info");
