@@ -1,5 +1,6 @@
 <?php
 include "connector.php";
+include "function/function.php";
 mysqli_set_charset($link,"utf8");
 echo $datum=$_REQUEST['datum'];
 echo $day=date('l',strtotime($datum));
@@ -429,6 +430,17 @@ $info="";
 						  <input type="hidden" class="form-control input-sm" name="rowCount" value="">
 						  <td><button type="submit" class="btn btn-primary" id="submit " name="submit" value="<?php echo $ii; ?>" >Submit</button> <button type="button" class="btn btn-danger" id="edit" name="edit" data-toggle="modal" data-target="#exampleModal" data-name_tv="" data-name_emission="" data-duration="" data-article="" data-id_user="" data-date="">Edit</button></td>
 						</form>
+					</tr>
+					<tr">
+					<?php
+					$res=mysqli_query($link, "SELECT * FROM `broadcast` WHERE date='$datum' AND date_publish!='$datum'");
+					$i = 1;
+					while($fi=mysqli_fetch_array($res)){
+						$date = date_create($fi['date_publish']);
+						echo "<td colspan='11' style='color:red; font-style:italic; padding-left:3%;'>" .  $i . ". Emisija: ''". getNameEmission($fi['id_emission']) . "'' uradjena: " . date_format($date, 'd.m.Y') . "</td>";
+					$i++;
+					}
+					?>
 					</tr>
 				  </tbody>
 			</table>
